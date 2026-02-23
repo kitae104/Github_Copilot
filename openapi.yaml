@@ -1,0 +1,405 @@
+openapi: 3.0.1
+info:
+    title: Simple Social Media API
+    version: 1.0.0
+    description: API for posts, comments, and likes (MVP) as specified in the PRD
+servers:
+    - url: http://localhost:8080/api
+paths:
+    /posts:
+        get:
+            summary: List recent posts
+            operationId: listPosts
+            tags:
+                - Posts
+            responses:
+                "200":
+                    description: A list of posts
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Post"
+                "500":
+                    $ref: "#/components/responses/InternalError"
+        post:
+            summary: Create a new post
+            operationId: createPost
+            tags:
+                - Posts
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/NewPost"
+            responses:
+                "201":
+                    description: Post created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Post"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "500":
+                    $ref: "#/components/responses/InternalError"
+
+    /posts/{postId}:
+        parameters:
+            - $ref: "#/components/parameters/postId"
+        get:
+            summary: Get a single post
+            operationId: getPost
+            tags:
+                - Posts
+            responses:
+                "200":
+                    description: The requested post
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Post"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+                "500":
+                    $ref: "#/components/responses/InternalError"
+        patch:
+            summary: Update a post
+            operationId: updatePost
+            tags:
+                - Posts
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/NewPost"
+            responses:
+                "200":
+                    description: Updated post
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Post"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+                "500":
+                    $ref: "#/components/responses/InternalError"
+        delete:
+            summary: Delete a post
+            operationId: deletePost
+            tags:
+                - Posts
+            responses:
+                "204":
+                    description: Post deleted (no content)
+                "404":
+                    $ref: "#/components/responses/NotFound"
+                "500":
+                    $ref: "#/components/responses/InternalError"
+
+    /posts/{postId}/comments:
+        parameters:
+            - $ref: "#/components/parameters/postId"
+        get:
+            summary: List comments for a post
+            operationId: listComments
+            tags:
+                - Comments
+            responses:
+                "200":
+                    description: A list of comments
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Comment"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+                "500":
+                    $ref: "#/components/responses/InternalError"
+        post:
+            summary: Create a comment on a post
+            operationId: createComment
+            tags:
+                - Comments
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/NewComment"
+            responses:
+                "201":
+                    description: Comment created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+                "500":
+                    $ref: "#/components/responses/InternalError"
+
+    /posts/{postId}/comments/{commentId}:
+        parameters:
+            - $ref: "#/components/parameters/postId"
+            - $ref: "#/components/parameters/commentId"
+        get:
+            summary: Get a specific comment
+            operationId: getComment
+            tags:
+                - Comments
+            responses:
+                "200":
+                    description: The requested comment
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+                "500":
+                    $ref: "#/components/responses/InternalError"
+        patch:
+            summary: Update a comment
+            operationId: updateComment
+            tags:
+                - Comments
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/NewComment"
+            responses:
+                "200":
+                    description: Updated comment
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Comment"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+                "500":
+                    $ref: "#/components/responses/InternalError"
+        delete:
+            summary: Delete a comment
+            operationId: deleteComment
+            tags:
+                - Comments
+            responses:
+                "204":
+                    description: Comment deleted (no content)
+                "404":
+                    $ref: "#/components/responses/NotFound"
+                "500":
+                    $ref: "#/components/responses/InternalError"
+
+    /posts/{postId}/likes:
+        parameters:
+            - $ref: "#/components/parameters/postId"
+        post:
+            summary: Like a post
+            operationId: likePost
+            tags:
+                - Likes
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/LikeRequest"
+            responses:
+                "201":
+                    description: Like created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/LikeResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+                "500":
+                    $ref: "#/components/responses/InternalError"
+        delete:
+            summary: Remove like from a post
+            operationId: unlikePost
+            tags:
+                - Likes
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/LikeRequest"
+            responses:
+                "204":
+                    description: Like removed (no content)
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+                "500":
+                    $ref: "#/components/responses/InternalError"
+
+components:
+    parameters:
+        postId:
+            name: postId
+            in: path
+            required: true
+            schema:
+                type: string
+            description: Identifier for the post
+        commentId:
+            name: commentId
+            in: path
+            required: true
+            schema:
+                type: string
+            description: Identifier for the comment
+
+    schemas:
+        Post:
+            type: object
+            properties:
+                id:
+                    type: string
+                    example: "1"
+                username:
+                    type: string
+                    example: "alice"
+                content:
+                    type: string
+                    example: "Loving the new trail shoes!"
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+                likes:
+                    type: integer
+                    example: 3
+                commentsCount:
+                    type: integer
+                    example: 2
+            required:
+                - id
+                - username
+                - content
+
+        NewPost:
+            type: object
+            properties:
+                username:
+                    type: string
+                content:
+                    type: string
+            required:
+                - username
+                - content
+
+        Comment:
+            type: object
+            properties:
+                id:
+                    type: string
+                    example: "100"
+                postId:
+                    type: string
+                username:
+                    type: string
+                content:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+                    nullable: true
+            required:
+                - id
+                - postId
+                - username
+                - content
+
+        NewComment:
+            type: object
+            properties:
+                username:
+                    type: string
+                content:
+                    type: string
+            required:
+                - username
+                - content
+
+        LikeRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+            required:
+                - username
+
+        LikeResponse:
+            type: object
+            properties:
+                postId:
+                    type: string
+                username:
+                    type: string
+                totalLikes:
+                    type: integer
+
+        Error:
+            type: object
+            properties:
+                code:
+                    type: integer
+                message:
+                    type: string
+
+    responses:
+        BadRequest:
+            description: Bad request
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/Error"
+        NotFound:
+            description: Resource not found
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/Error"
+        InternalError:
+            description: Internal server error
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/Error"
+
+tags:
+    - name: Posts
+      description: Endpoints to manage posts
+    - name: Comments
+      description: Endpoints to manage comments on posts
+    - name: Likes
+      description: Endpoints to like/unlike posts
+
+x-basePath: /api

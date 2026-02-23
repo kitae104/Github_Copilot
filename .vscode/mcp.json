@@ -1,0 +1,36 @@
+{
+    "inputs": [
+        {
+            "type": "promptString",
+            "id": "figma-api-key",
+            "description": "MCP server access key for Figma",
+            "password": true
+        }
+    ],
+    "servers": {
+        "awesome-copilot": {
+            "command": "docker",
+            "args": [
+                "run",
+                "-i",
+                "--rm",
+                "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest"
+            ]
+        },
+        "context7": {
+            "command": "npx",
+            "args": ["-y", "@upstash/context7-mcp"]
+        },
+        "Framelink Figma MCP": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "figma-developer-mcp",
+                "--figma-api-key=${input:figma-api-key}",
+                "--stdio"
+            ],
+            "type": "stdio",
+            "env": {}
+        }
+    }
+}

@@ -1,0 +1,17 @@
+[project]
+name = "github_copilot_python"
+version = "0.1.0"
+description = "샘플 Python 프로젝트"
+authors = ["GitHub Copilot <noreply@example.com>"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+start = "main:main"
+
+[project.dependencies]
+fastapi = "^0.95.2"
+uvicorn = "^0.22.0"
+pyyaml = "^6.0"
